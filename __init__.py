@@ -109,12 +109,33 @@ def handle_youtube_callback():
 def handle_list_uploads():
     #result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlists',params=dict(access_token=session['youtube_access_token']).content
     
-    params={'part':'snippet','mine':'True','access_token':session['youtube_access_token'],'maxResults':'50'}
+    params={'part':'snippet,status','mine':'True','access_token':session['youtube_access_token'],'maxResults':'50'}
     result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlists',params=params).content
     app.logger.error('handle_list_uploads')
     app.logger.error(result)
     return jsonify(result)
 
+@app.route('/list_items')
+def handle_list_items():
+    params={'part':'snippet','playlistId':'PLAVoytVaY-lG1z3d9uBNmsuHLJiUBG2Ie','access_token':session['youtube_access_token'],'maxResults':'50'}
+    result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlistItems',params=params).content
+    app.logger.error('handle_list_items')
+    app.logger.error(result)
+    return jsonify(result)
+
+@app.route('/create_playlist')
+def handle_create_playlist():
+    template_list={ 'snippet':{'title':'mylist','description':'how to play basketball'}, 'status':{'privacyStatus':'public'}}
+
+    params={'part':'snippet,status','access_token':session['youtube_access_token'],'maxResults':'50'}
+    headers={'Content-type':'application/json'}
+    result = youtube_service.post('https://www.googleapis.com/youtube/v3/playlists',params=params,data=json.dumps(template_list),headers=headers).content
+    app.logger.error('handle_list_items')
+    app.logger.error(result)
+    return jsonify(result)
+ 
+
+#https://www.googleapis.com/youtube/v3/playlistItems
 @app.route('/twitter_callback')
 def handle_twitter_callback():
     app.logger.error('in twitter_callback')
