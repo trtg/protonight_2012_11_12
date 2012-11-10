@@ -70,6 +70,11 @@ def handle_layout():
 def handle_learn():
     return render_template('learn.html')
 
+@app.route('/teach.html')
+@app.route('/teach')
+def handle_teach():
+    return render_template('teach.html')
+
 @app.route('/twilio')
 def handle_twilio():
     dest_number = request.args.get('dest')
@@ -117,7 +122,9 @@ def handle_list_uploads():
 
 @app.route('/list_items')
 def handle_list_items():
-    params={'part':'snippet','playlistId':'PLAVoytVaY-lG1z3d9uBNmsuHLJiUBG2Ie','access_token':session['youtube_access_token'],'maxResults':'50'}
+    list_id = request.args.get('playlist_id')
+    #params={'part':'snippet','playlistId':'PLAVoytVaY-lG1z3d9uBNmsuHLJiUBG2Ie','access_token':session['youtube_access_token'],'maxResults':'50'}
+    params={'part':'snippet','playlistId':list_id,'access_token':session['youtube_access_token'],'maxResults':'50'}
     result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlistItems',params=params).content
     app.logger.error('handle_list_items')
     app.logger.error(result)

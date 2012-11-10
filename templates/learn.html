@@ -1,12 +1,41 @@
 {% extends "layout.html" %}
 {%block title %}Learn{% endblock %}
 {%block content %}
-<h1> some stuff</h1>
+<h4> Pick a sport to learn more about below </h4>
+separate link to add this playlist to your account, but also display thumbnails, etc. for each video in the playlist
+<a href="/list_items?playlist_id=PLa8cVyu27Ul6FKXAY-kGrmHkiPFTNH1qr">Soccer</a>
+<a href="/list_items?playlist_id=PLa8cVyu27Ul5IQeL9ZnMAbR3MmEyKroIc">Volleyball</a>
+
+<ul id="soccerlist">
+</ul>
 {% endblock %}
 {%block jquery_block %}
      <script type="text/javascript">
          $(document).ready(function(){
                  $('#nav_menu_learn').addClass('active');
+
+                 $.ajax({
+                        crossDomain: false,
+                        type:'get',
+                        url:'/list_items?playlist_id=PLa8cVyu27Ul6FKXAY-kGrmHkiPFTNH1qr',
+                        dataType:'json',
+                        success: function(results)
+                        {
+                        var items_html="";
+                        $.each(results['items'],function(index,value)
+                            {
+                            //console.log(value);
+                            video_title=value['snippet']['title'];
+                            video_link='http://www.youtube.com/watch?v='+value['snippet']['resourceId']['videoId'];
+                            thumbnail_link=value['snippet']['thumbnails']['default']['url']; 
+                            items_html+='<li><a href="'+video_link+'"><img src="'+thumbnail_link+'"/></a></li>\n'
+                            });//end each
+                        console.log(items_html)
+                        $('#soccerlist').html(items_html);
+                        console.log(results);
+                        }
+                    });
+
                  });
              </script>
 {%endblock%}

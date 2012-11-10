@@ -21,6 +21,17 @@
                     $('#auth_youtube').hide();
                  }
 
+                 $.ajax({
+                        crossDomain: false,
+                        type:'get',
+                        url:'/list_uploads',
+                        dataType:'json',
+                        success: function(results)
+                        {
+                        console.log(results);
+                        }
+                    });
+
                  $('#auth_youtube').click(function(e){
                      
 /*
