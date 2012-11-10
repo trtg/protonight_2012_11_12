@@ -34,12 +34,15 @@ twitter_service=OAuth1Service(
 
 
 #-------------youtube-------------------------
+#the scope specified here is full read/write as opposed to just
+#youtube.readonly or youtube.upload
 flow = OAuth2WebServerFlow(client_id=youtube_client_id,
                            client_secret=youtube_client_secret,
-                           scope='https://www.googleapis.com/auth/youtube.readonly',
+                           scope='https://www.googleapis.com/auth/youtube',
                            redirect_uri='http://www.quantifythat.com/youtube_callback')
-#------------------------------------------------
 
+youtube_credentials=""
+#------------------------------------------------
 
 @app.route('/')
 def handle_main():
@@ -81,8 +84,8 @@ def handle_youtube_callback():
     app.logger.error('in handle_oauth')
     app.logger.error(request.args.get('code'))
     request.args.get('code')
-    credentials = flow.step2_exchange(request.args.get('code'))
-    youtube= build('youtube','v3',http=credentials.authorize(httplib2.Http()))
+    youtube_credentials = flow.step2_exchange(request.args.get('code'))
+    youtube= build('youtube','v3',http=youtube_credentials.authorize(httplib2.Http()))
 
     #get the id of your uploads playlist by listing your channels
     channels_response = youtube.channels().list(mine="", part="contentDetails").execute()
