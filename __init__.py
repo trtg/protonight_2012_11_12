@@ -1,16 +1,26 @@
-from flask import Flask,render_template,request,redirect,url_for,abort,session,jsonify
-from oauth2client.client import OAuth2WebServerFlow#google auth
-from youtube_credentials import youtube_client_id,youtube_client_secret
-from twitter_credentials import twitter_consumer_key,twitter_consumer_secret
-from rauth.service import OAuth1Service
-from apiclient.discovery import build#google api-client
 import httplib2
 import requests
 import json
 
+from flask import Flask,render_template,request,redirect,url_for,abort,session,jsonify
+from youtube_credentials import youtube_client_id,youtube_client_secret
+from twitter_credentials import twitter_consumer_key,twitter_consumer_secret
+from twilio_credentials import twilio_account_id,twilio_token,twilio_source_number
+
+from oauth2client.client import OAuth2WebServerFlow#google auth
+from rauth.service import OAuth1Service
+from apiclient.discovery import build#google api-client
+
+from twilio.rest import TwilioRestClient
+
 app = Flask(__name__,static_path='/static/')
 #never enable this when externally visible
 app.config['DEBUG']=True
+
+
+#------------twilio------------------------------
+client = TwilioRestClient(twilio_account_id, twilio_token)
+
 
 #------------twitter------------------------------
 twitter_service=OAuth1Service(
@@ -53,6 +63,18 @@ def handle_layout():
 @app.route('/learn')
 def handle_learn():
     return render_template('learn.html')
+
+@app.route('/twilio')
+def handle_twilio():
+    dest_number = request.args.get('dest')
+    #FIXME maybe dynamically generate messages using query parameters instead 
+    #of using one canned message?
+    call = client.calls.create(to=dest_number, 
+                           from_=twilio_source_number, 
+                           url="http://www.quantifythat.com/static/message.xml",method="GET")
+    print call.sid
+    return ("called %s"%dest_number)
+
 
 @app.route('/youtube_callback')
 def handle_youtube_callback():
