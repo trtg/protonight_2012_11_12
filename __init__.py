@@ -9,7 +9,7 @@ from twitter_credentials import twitter_consumer_key,twitter_consumer_secret
 from twilio_credentials import twilio_account_id,twilio_token,twilio_source_number
 
 from oauth2client.client import OAuth2WebServerFlow#google auth
-from rauth.service import OAuth1Service
+from rauth.service import OAuth1Service,OAuth2Service
 from apiclient.discovery import build#google api-client
 
 from twilio.rest import TwilioRestClient
@@ -38,13 +38,12 @@ twitter_service=OAuth1Service(
 #-------------youtube-------------------------
 #the scope specified here is full read/write as opposed to just
 #youtube.readonly or youtube.upload
-flow = OAuth2WebServerFlow(client_id=youtube_client_id,
-                           client_secret=youtube_client_secret,
-                           scope='https://www.googleapis.com/auth/youtube',
-                           redirect_uri='http://www.quantifythat.com/youtube_callback')
-
-youtube_credentials=""
-youtube_service=""
+youtube_service =OAuth2Service(
+        name='youtube',
+        consumer_key=youtube_client_id,
+        consumer_secret=youtube_client_secret,
+        access_token_url='https://accounts.google.com/o/oauth2/token',
+        authorize_url='https://accounts.google.com/o/oauth2/auth')
 #------------------------------------------------
 
 @app.route('/')
@@ -87,31 +86,32 @@ def handle_twilio():
 def handle_youtube_callback():
     app.logger.error('in handle_oauth')
     app.logger.error(request.args.get('code'))
-    session['youtube_code']=request.args.get('code')
+    #data=dict(code=request.args.get('code'),redirect_uri='http://www.quantifythat.com/youtube_callback')
+    data=dict(code=request.args.get('code'),redirect_uri='http://www.quantifythat.com/youtube_callback')
+    if session.get('youtube_access_token',None) is None or session.get('youtube_refresh_token',None) is None:
+        #access_token=youtube_service.get_access_token('POST',data=data).content['access_token']
+        results=youtube_service.get_access_token('POST',data=data).content
+        app.logger.error(results)
+        #not getting a refresh token?!!!!
+        #session['youtube_access_token']=results['access_token']
+        #session['youtube_refresh_token']=results['refresh_token']
+        #app.logger.error('access token is ')
+        #app.logger.error(results['access_token'])
+        #app.logger.error('refresh token is ')
+        #app.logger.error(results['refresh_token'])
+
     #FIXME set authorization state internally and just redirect to / so the user doesn't see cluttered URLs
     session['youtube_allowed']=True
     return redirect('/')
 
 @app.route('/list_uploads')
 def handle_list_uploads():
-    app.logger.error('youtube_code in handle_list_uploads: ')
-    app.logger.error(session['youtube_code'])
-    youtube_credentials = flow.step2_exchange(session['youtube_code'])
-    youtube_service = build('youtube','v3',http=youtube_credentials.authorize(httplib2.Http()))
-    #get the id of your uploads playlist by listing your channels
-    channels_response = youtube_service.channels().list(mine="", part="contentDetails").execute()
-    app.logger.error(channels_response)
-    #just grabbing first item for now
-    uploads_list_id= channels_response['items'][0].get('contentDetails').get('relatedPlaylists').get('uploads')
-    app.logger.error("uploads_list_id is %s"% uploads_list_id)
-
-    #list the contents of your uploads playlist
-    next_page_token=""
-    app.logger.error('playlistId=%s',uploads_list_id)
-    playlist_items_response = youtube_service.playlistItems().list(playlistId=uploads_list_id,part="snippet",maxResults=50,pageToken=next_page_token).execute()
-    #app.logger.error(playlist_items_response)
-    #now render_template something useful with the json here
-    return jsonify(playlist_items_response)
+    #result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlists',params=dict(access_token=session['youtube_access_token']).content
+    params={'part':'snippet','mine':'True','access_token':session['youtube_access_token']}
+    result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlists',params=params).content
+    app.logger.error('handle_list_uploads')
+    app.logger.error(result)
+    return jsonify(result)
 
 @app.route('/twitter_callback')
 def handle_twitter_callback():
