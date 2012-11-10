@@ -87,15 +87,17 @@ def handle_twilio():
 def handle_youtube_callback():
     app.logger.error('in handle_oauth')
     app.logger.error(request.args.get('code'))
-    request.args.get('code')
-    youtube_credentials = flow.step2_exchange(request.args.get('code'))
-    youtube_service = build('youtube','v3',http=youtube_credentials.authorize(httplib2.Http()))
+    session['youtube_code']=request.args.get('code')
     #FIXME set authorization state internally and just redirect to / so the user doesn't see cluttered URLs
     session['youtube_allowed']=True
     return redirect('/')
 
 @app.route('/list_uploads')
 def handle_list_uploads():
+    app.logger.error('youtube_code in handle_list_uploads: ')
+    app.logger.error(session['youtube_code'])
+    youtube_credentials = flow.step2_exchange(session['youtube_code'])
+    youtube_service = build('youtube','v3',http=youtube_credentials.authorize(httplib2.Http()))
     #get the id of your uploads playlist by listing your channels
     channels_response = youtube_service.channels().list(mine="", part="contentDetails").execute()
     app.logger.error(channels_response)
