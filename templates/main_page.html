@@ -2,9 +2,9 @@
 {%block title %}Home{% endblock %}
 {%block content %}
 <div id="auth_panel">
-<h1>Before we get started you'll need to give our app access on youtube and twitter:</h1>
-<a id="auth_youtube" href="/start_youtube">list your uploads on Youtube</a><br>
-<a href="/start_twitter">Connect to your favorite athletes/mentors on twitter</a>
+<h1>Before we get started you'll need to give our app access:</h1>
+<a id="auth_youtube" href="/start_youtube">allow us to list your uploads on Youtube</a><br>
+<a href="/start_twitter">allow us to connect you to your favorite athletes/mentors on twitter</a>
 </div>
 
 {% endblock %}
@@ -14,9 +14,31 @@
      //to conditionally show the auth_panel
          $(document).ready(function(){
                  $('#nav_menu_main').addClass('active');
+                 var youtube_allowed={{youtube_allowed}};
+                 console.log('youtube_allowed');
+                 console.log(youtube_allowed);
+                 if(youtube_allowed==1){
+                    $('#auth_youtube').hide();
+                 }
+
                  $('#auth_youtube').click(function(e){
+                     
+/*
                      console.log('clicked youtube');
-                     });
+                     e.preventDefault();
+                     $.ajax({
+                        crossDomain: false,
+                        type:'get',
+                        url:'/start_youtube',
+                        dataType:'json',
+                        success: function(results)
+                        {
+                        console.log(results);
+                        }
+                    });
+*/
+                     });//end auth_youtube
+
                  });
              </script>
 {%endblock%}

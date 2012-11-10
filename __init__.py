@@ -3,6 +3,7 @@ import requests
 import json
 
 from flask import Flask,render_template,request,redirect,url_for,abort,session,jsonify
+from flask_config import flask_secret_key
 from youtube_credentials import youtube_client_id,youtube_client_secret
 from twitter_credentials import twitter_consumer_key,twitter_consumer_secret
 from twilio_credentials import twilio_account_id,twilio_token,twilio_source_number
@@ -16,7 +17,8 @@ from twilio.rest import TwilioRestClient
 app = Flask(__name__,static_path='/static/')
 #never enable this when externally visible
 app.config['DEBUG']=True
-
+app.config['SECRET_KEY']=flask_secret_key
+#hack for demo purposes
 
 #------------twilio------------------------------
 client = TwilioRestClient(twilio_account_id, twilio_token)
@@ -42,16 +44,18 @@ flow = OAuth2WebServerFlow(client_id=youtube_client_id,
                            redirect_uri='http://www.quantifythat.com/youtube_callback')
 
 youtube_credentials=""
+youtube_service=""
 #------------------------------------------------
 
 @app.route('/')
 def handle_main():
     app.logger.error(request.query_string)
-    userid = request.args.get('fbuser')
-    if userid is None:
-        userid=0
+    if session.get('youtube_allowed',None)==True: 
+        youtube_allowed=1
+    else:
+        youtube_allowed=0
 
-    return render_template('main_page.html',fbuser=userid)
+    return render_template('main_page.html',youtube_allowed=youtube_allowed)
 
 @app.route('/connect.html')
 @app.route('/connect')
@@ -85,10 +89,15 @@ def handle_youtube_callback():
     app.logger.error(request.args.get('code'))
     request.args.get('code')
     youtube_credentials = flow.step2_exchange(request.args.get('code'))
-    youtube= build('youtube','v3',http=youtube_credentials.authorize(httplib2.Http()))
+    youtube_service = build('youtube','v3',http=youtube_credentials.authorize(httplib2.Http()))
+    #FIXME set authorization state internally and just redirect to / so the user doesn't see cluttered URLs
+    session['youtube_allowed']=True
+    return redirect('/')
 
+@app.route('/list_uploads')
+def handle_list_uploads():
     #get the id of your uploads playlist by listing your channels
-    channels_response = youtube.channels().list(mine="", part="contentDetails").execute()
+    channels_response = youtube_service.channels().list(mine="", part="contentDetails").execute()
     app.logger.error(channels_response)
     #just grabbing first item for now
     uploads_list_id= channels_response['items'][0].get('contentDetails').get('relatedPlaylists').get('uploads')
@@ -97,7 +106,7 @@ def handle_youtube_callback():
     #list the contents of your uploads playlist
     next_page_token=""
     app.logger.error('playlistId=%s',uploads_list_id)
-    playlist_items_response = youtube.playlistItems().list(playlistId=uploads_list_id,part="snippet",maxResults=50,pageToken=next_page_token).execute()
+    playlist_items_response = youtube_service.playlistItems().list(playlistId=uploads_list_id,part="snippet",maxResults=50,pageToken=next_page_token).execute()
     #app.logger.error(playlist_items_response)
     #now render_template something useful with the json here
     return jsonify(playlist_items_response)
