@@ -73,7 +73,7 @@ def handle_youtube_callback():
     next_page_token=""
     app.logger.error('playlistId=%s',uploads_list_id)
     playlist_items_response = youtube.playlistItems().list(playlistId=uploads_list_id,part="snippet",maxResults=50,pageToken=next_page_token).execute()
-    app.logger.error(playlist_items_response)
+    #app.logger.error(playlist_items_response)
     #now render_template something useful with the json here
     return jsonify(playlist_items_response)
 
@@ -85,7 +85,6 @@ def handle_twitter_callback():
     app.logger.error(request.query_string)
     return "in twitter_callback"
 
-#chris.jason@espn.com
 @app.route('/start_youtube')
 def handle_start_youtube():
     app.logger.error('in start_youtube')

@@ -1,12 +1,22 @@
 {% extends "layout.html" %}
 {%block title %}Home{% endblock %}
 {%block content %}
-<h1> some stuff</h1>
+<div id="auth_panel">
+<h1>Before we get started you'll need to give our app access on youtube and twitter:</h1>
+<a id="auth_youtube" href="/start_youtube">list your uploads on Youtube</a><br>
+<a href="/start_twitter">Connect to your favorite athletes/mentors on twitter</a>
+</div>
+
 {% endblock %}
 {%block jquery_block %}
      <script type="text/javascript">
+         //check for variable passed in from jinja indicating if user has already granted access
+     //to conditionally show the auth_panel
          $(document).ready(function(){
                  $('#nav_menu_main').addClass('active');
+                 $('#auth_youtube').click(function(e){
+                     console.log('clicked youtube');
+                     });
                  });
              </script>
 {%endblock%}
