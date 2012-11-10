@@ -93,7 +93,8 @@ def handle_youtube_callback():
         results=youtube_service.get_access_token('POST',data=data).content
         app.logger.error(results)
         #not getting a refresh token?!!!!
-        #session['youtube_access_token']=results['access_token']
+        app.logger.error('overwriting access token')
+        session['youtube_access_token']=results['access_token']
         #session['youtube_refresh_token']=results['refresh_token']
         #app.logger.error('access token is ')
         #app.logger.error(results['access_token'])
@@ -107,7 +108,8 @@ def handle_youtube_callback():
 @app.route('/list_uploads')
 def handle_list_uploads():
     #result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlists',params=dict(access_token=session['youtube_access_token']).content
-    params={'part':'snippet','mine':'True','access_token':session['youtube_access_token']}
+    
+    params={'part':'snippet','mine':'True','access_token':session['youtube_access_token'],'maxResults':'50'}
     result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlists',params=params).content
     app.logger.error('handle_list_uploads')
     app.logger.error(result)
