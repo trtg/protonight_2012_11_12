@@ -133,6 +133,16 @@ def handle_create_playlist():
     app.logger.error('handle_list_items')
     app.logger.error(result)
     return jsonify(result)
+
+@app.route('/populate_playlist')
+def handle_populate_playlist():
+    template_item={ 'snippet':{'playlistId':'PLAVoytVaY-lG1IUBjNKk-NT4yxGvQttas','resourceId':{'kind':'youtube#video','videoId':'qyM37XKkmKQ' }}, 'contentDetails':{'note':'this video was great'}}
+    params={'part':'snippet,contentDetails','access_token':session['youtube_access_token'],'maxResults':'50'}
+    headers={'Content-type':'application/json'}
+    result = youtube_service.post('https://www.googleapis.com/youtube/v3/playlistItems',params=params,data=json.dumps(template_item),headers=headers).content
+    app.logger.error('handle_populate_playlist')
+    app.logger.error(result)
+    return jsonify(result)
  
 
 #https://www.googleapis.com/youtube/v3/playlistItems
