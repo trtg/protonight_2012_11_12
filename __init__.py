@@ -126,18 +126,20 @@ def handle_list_items():
     #params={'part':'snippet','playlistId':'PLAVoytVaY-lG1z3d9uBNmsuHLJiUBG2Ie','access_token':session['youtube_access_token'],'maxResults':'50'}
     params={'part':'snippet,contentDetails','playlistId':list_id,'access_token':session['youtube_access_token'],'maxResults':'50'}
     result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlistItems',params=params).content
+    for item in result['items']:
+        app.logger.error(item['snippet'].get('title'))
+        app.logger.error(item['snippet'].get('resourceId').get('videoId'))
     app.logger.error('handle_list_items')
-    app.logger.error(result)
+    #app.logger.error(result)
     return jsonify(result)
 
 @app.route('/create_playlist')
 def handle_create_playlist():
-    template_list={ 'snippet':{'title':'mylist','description':'how to play basketball'}, 'status':{'privacyStatus':'public'}}
-
+    template_list={ 'snippet':{'title':'mylist2','description':'how to play basketball'}, 'status':{'privacyStatus':'public'}}
     params={'part':'snippet,status','access_token':session['youtube_access_token'],'maxResults':'50'}
     headers={'Content-type':'application/json'}
     result = youtube_service.post('https://www.googleapis.com/youtube/v3/playlists',params=params,data=json.dumps(template_list),headers=headers).content
-    app.logger.error('handle_list_items')
+    app.logger.error('create_playlist')
     app.logger.error(result)
     return jsonify(result)
 
@@ -151,6 +153,33 @@ def handle_populate_playlist():
     app.logger.error(result)
     return jsonify(result)
  
+@app.route('/copy_playlist')
+def handle_copy_playlist():
+    #create new list
+    list_name = request.args.get('list_name')
+    template_list={ 'snippet':{'title':list_name,'description':'How to become a great volleyball player, or at least train like one'}, 'status':{'privacyStatus':'public'}}
+    params={'part':'snippet,status','access_token':session['youtube_access_token'],'maxResults':'50'}
+    headers={'Content-type':'application/json'}
+    result = youtube_service.post('https://www.googleapis.com/youtube/v3/playlists',params=params,data=json.dumps(template_list),headers=headers).content
+    #------------iterate over videos
+    app.logger.error(result) 
+    destination_list_id=result['id']
+
+    params={'part':'snippet,contentDetails','playlistId':'PLa8cVyu27Ul6FKXAY-kGrmHkiPFTNH1qr','access_token':session['youtube_access_token'],'maxResults':'50'}
+    src_list = youtube_service.get('https://www.googleapis.com/youtube/v3/playlistItems',params=params).content
+    params={'part':'snippet,contentDetails','access_token':session['youtube_access_token'],'maxResults':'50'}
+    headers={'Content-type':'application/json'}
+    for item in src_list['items']:
+        app.logger.error("Copying into ")
+        app.logger.error(destination_list_id)
+        app.logger.error(item['snippet'].get('title'))
+        video_id=item['snippet'].get('resourceId').get('videoId')
+        template_item={ 'snippet':{'playlistId':destination_list_id,'resourceId':{'kind':'youtube#video','videoId':video_id }}, 'contentDetails':{'note':'omglolthisisreallylong'}}
+        result = youtube_service.post('https://www.googleapis.com/youtube/v3/playlistItems',params=params,data=json.dumps(template_item),headers=headers).content
+    return "copied everything"
+
+    #create list, list_items, then populate
+
 
 #https://www.googleapis.com/youtube/v3/playlistItems
 @app.route('/twitter_callback')
