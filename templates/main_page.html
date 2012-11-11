@@ -1,11 +1,43 @@
 {% extends "layout.html" %}
 {%block title %}Home{% endblock %}
+{%block header_block %}
+ <link href="static/css/sporty.css" rel="stylesheet" media="screen">
+ {%endblock%}
+
 {%block content %}
 <div id="auth_panel">
-<h4>Before we get started you'll need to give our app access:</h4>
-<a id="auth_youtube" href="/start_youtube">allow us to list your uploads on Youtube</a><br>
-<a href="/start_twitter">allow us to connect you to your favorite athletes/mentors on twitter</a>
+
+<div class="sporty" style="background-image:url(static/img/subtlenet2.png); background-repeat:repeat">
+            <img src="http://a.espncdn.com/photo/2011/0920/ncaa_lagunasn2b_300.jpg"/>
+            <h1>About Sporty</h1>
+                <p>Sporty provides a female-friendly place for women who want to even out the playing field.</p>
+                </br>
+                <p>If you want to learn to play a sport at your own pace and from someone of your own gender, but have a hard time finding the right online help, you've come to the right place.</p>
+                </br>
+                <p>Welcome! Get started learning <a href="/learn.html">here</a>.
+        </div >
+
+
+
 </div>
+
+<div class="sporty2">
+            <div class="left">
+                <h2>More sports are coming soon!</h2>
+                <p>Submit your email address to receive updates.</p>
+                <form name="input" class="form-search" action="html_form_action.asp" method="get">
+                <input class="input-medium search-query" type="text" name="user">
+                <button class="btn" type="button">Submit</button>                </form> 
+            </div>
+            <div class="right">
+                <h2>What sports do you want to learn to play?</h2>
+                <p>Email us at <a href="mailto:hey@sporty.com">hey@sporty.com.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>Put the you in team.</h3>
+        </div>
 
 {% endblock %}
 {%block jquery_block %}

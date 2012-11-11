@@ -1,7 +1,87 @@
 {% extends "layout.html" %}
 {%block title %}Connect{% endblock %}
+{%block header_block %}
+ <link href="static/css/sporty.css" rel="stylesheet" media="screen">
+ {%endblock%}
+
 {%block content %}
-Display twitter API results here
+
+<div class="sporty" style="background-image:url(static/img/subtlenet2.png); background-repeat:repeat">
+            <h1>Sporties Unite!</h1>
+            <p>Find professional female athletes online.</p>
+            <h3>Soccer</h3>
+                <p>Alex Morgan</p>
+                                    <a href="https://twitter.com/intent/tweet?screen_name=alexmorgan13" class="twitter-mention-button" data-lang="en">Tweet to @alexmorgan13</a>
+
+                                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+            </br>
+            <h3>Volleyball</h3>
+                <p>Sporty provides a female-friendly place for women who want to even out the playing field.</p>
+                </br>
+                </br>
+            <h1>Be a team player.</h1>
+                <p>Fill in your information to connect.</p>
+                <form class="form-horizontal">
+            <div class="control-group">
+            <label class="control-label" for="inputEmail">Username</label>
+            <div class="controls">
+            <input type="text" id="inputEmail" placeholder="Username">
+            </div>
+            </div>
+            <div class="control-group">
+            <label class="control-label" for="inputPassword">Twitter</label>
+            <div class="controls">
+            <input type="password" id="inputPassword" placeholder="Twitter">
+            </div>
+            </div>
+            <div class="control-group">
+            <label class="control-label" for="inputPassword">Website</label>
+            <div class="controls">
+            <input type="password" id="inputWebsite" placeholder="Website">
+            </div>
+            </div>
+           <div class="control-group">
+            <label class="control-label" for="inputSport">Sport(s)</label>
+            <div class="controls">
+            <input type="password" id="inputSport" placeholder="Sport(s)">
+            </div>
+            </div>
+                <div class="control-group">
+            <div class="controls">
+            <label class="checkbox">
+            <input type="checkbox"> Remember me
+            </label>
+            <button type="submit" class="btn">Submit</button>
+            </div>
+            </div>
+            </form>
+                </br>
+        </div >
+
+        <div class="sporty2">
+            <div class="left">
+                <h2>More sports are coming soon!</h2>
+                <p>Submit your email address to receive updates.</p>
+                <form name="input" class="form-search" action="html_form_action.asp" method="get">
+                <input class="input-medium search-query" type="text" name="user">
+                <button class="btn" type="button">Submit</button>                </form> 
+            </div>
+            <div class="right">
+                <h2>What sports do you want to learn to play?</h2>
+                <p>Email us at <a href="mailto:hey@sporty.com">hey@sporty.com.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>Put the you in team.</h3>
+        </div>
+
+
+
+
+
+
+
 {% endblock %}
 {%block jquery_block %}
      <script type="text/javascript">
