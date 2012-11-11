@@ -124,7 +124,7 @@ def handle_list_uploads():
 def handle_list_items():
     list_id = request.args.get('playlist_id')
     #params={'part':'snippet','playlistId':'PLAVoytVaY-lG1z3d9uBNmsuHLJiUBG2Ie','access_token':session['youtube_access_token'],'maxResults':'50'}
-    params={'part':'snippet','playlistId':list_id,'access_token':session['youtube_access_token'],'maxResults':'50'}
+    params={'part':'snippet,contentDetails','playlistId':list_id,'access_token':session['youtube_access_token'],'maxResults':'50'}
     result = youtube_service.get('https://www.googleapis.com/youtube/v3/playlistItems',params=params).content
     app.logger.error('handle_list_items')
     app.logger.error(result)
@@ -143,7 +143,7 @@ def handle_create_playlist():
 
 @app.route('/populate_playlist')
 def handle_populate_playlist():
-    template_item={ 'snippet':{'playlistId':'PLAVoytVaY-lG1IUBjNKk-NT4yxGvQttas','resourceId':{'kind':'youtube#video','videoId':'qyM37XKkmKQ' }}, 'contentDetails':{'note':'this video was great'}}
+    template_item={ 'snippet':{'playlistId':'PLAVoytVaY-lG1IUBjNKk-NT4yxGvQttas','resourceId':{'kind':'youtube#video','videoId':'BbVJDad8F9M' }}, 'contentDetails':{'note':'omglolthisisreallylong'}}
     params={'part':'snippet,contentDetails','access_token':session['youtube_access_token'],'maxResults':'50'}
     headers={'Content-type':'application/json'}
     result = youtube_service.post('https://www.googleapis.com/youtube/v3/playlistItems',params=params,data=json.dumps(template_item),headers=headers).content

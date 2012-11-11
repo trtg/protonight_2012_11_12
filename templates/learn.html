@@ -28,7 +28,7 @@ separate link to add this playlist to your account, but also display thumbnails,
                             video_title=value['snippet']['title'];
                             video_link='http://www.youtube.com/watch?v='+value['snippet']['resourceId']['videoId'];
                             thumbnail_link=value['snippet']['thumbnails']['default']['url']; 
-                            items_html+='<li><a href="'+video_link+'"><img src="'+thumbnail_link+'"/></a></li>\n'
+                            items_html+='<li><a href="'+video_link+'"><img src="'+thumbnail_link+'"/>'+video_title.substr(0,40)+'...</a></li>\n';
                             });//end each
                         console.log(items_html)
                         $('#soccerlist').html(items_html);
