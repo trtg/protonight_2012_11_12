@@ -178,6 +178,30 @@ def handle_copy_playlist():
         result = youtube_service.post('https://www.googleapis.com/youtube/v3/playlistItems',params=params,data=json.dumps(template_item),headers=headers).content
     return "copied everything"
 
+@app.route('/copy_soccer')
+def handle_copy_soccer():
+    #create new list
+    list_name = request.args.get('list_name')
+    template_list={ 'snippet':{'title':list_name,'description':'How to become a great soccer player, or at least train like one'}, 'status':{'privacyStatus':'public'}}
+    params={'part':'snippet,status','access_token':session['youtube_access_token'],'maxResults':'50'}
+    headers={'Content-type':'application/json'}
+    result = youtube_service.post('https://www.googleapis.com/youtube/v3/playlists',params=params,data=json.dumps(template_list),headers=headers).content
+    #------------iterate over videos
+    app.logger.error(result) 
+    destination_list_id=result['id']
+
+    params={'part':'snippet,contentDetails','playlistId':'PLa8cVyu27Ul5IQeL9ZnMAbR3MmEyKroIc','access_token':session['youtube_access_token'],'maxResults':'50'}
+    src_list = youtube_service.get('https://www.googleapis.com/youtube/v3/playlistItems',params=params).content
+    params={'part':'snippet,contentDetails','access_token':session['youtube_access_token'],'maxResults':'50'}
+    headers={'Content-type':'application/json'}
+    for item in src_list['items']:
+        app.logger.error("Copying into ")
+        app.logger.error(destination_list_id)
+        app.logger.error(item['snippet'].get('title'))
+        video_id=item['snippet'].get('resourceId').get('videoId')
+        template_item={ 'snippet':{'playlistId':destination_list_id,'resourceId':{'kind':'youtube#video','videoId':video_id }}, 'contentDetails':{'note':'omglolthisisreallylong'}}
+        result = youtube_service.post('https://www.googleapis.com/youtube/v3/playlistItems',params=params,data=json.dumps(template_item),headers=headers).content
+    return "copied everything"
     #create list, list_items, then populate
 
 
