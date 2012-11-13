@@ -4,13 +4,14 @@ import json
 
 from flask import Flask,render_template,request,redirect,url_for,abort,session,jsonify
 from flask_config import flask_secret_key
-from youtube_credentials import youtube_client_id,youtube_client_secret
-from twitter_credentials import twitter_consumer_key,twitter_consumer_secret
-from twilio_credentials import twilio_account_id,twilio_token,twilio_source_number
+#from youtube_credentials import youtube_client_id,youtube_client_secret
+#from twitter_credentials import twitter_consumer_key,twitter_consumer_secret
+#from twilio_credentials import twilio_account_id,twilio_token,twilio_source_number
+from flickr_credentials import flickr_key
 
-from oauth2client.client import OAuth2WebServerFlow#google auth
+#from oauth2client.client import OAuth2WebServerFlow#google auth
 from rauth.service import OAuth1Service,OAuth2Service
-from apiclient.discovery import build#google api-client
+#from apiclient.discovery import build#google api-client
 
 from twilio.rest import TwilioRestClient
 
@@ -21,29 +22,29 @@ app.config['SECRET_KEY']=flask_secret_key
 #hack for demo purposes
 
 #------------twilio------------------------------
-client = TwilioRestClient(twilio_account_id, twilio_token)
+#client = TwilioRestClient(twilio_account_id, twilio_token)
 
 
 #------------twitter------------------------------
-twitter_service=OAuth1Service(
-                name='twitter',
-                consumer_key=twitter_consumer_key,
-                consumer_secret=twitter_consumer_secret,
-                request_token_url='https://api.twitter.com/oauth/request_token',
-                access_token_url='https://api.twitter.com/oauth/access_token',
-                authorize_url='https://api.twitter.com/oauth/authorize',
-                header_auth=True)
-
+#twitter_service=OAuth1Service(
+#                name='twitter',
+#                consumer_key=twitter_consumer_key,
+#                consumer_secret=twitter_consumer_secret,
+#                request_token_url='https://api.twitter.com/oauth/request_token',
+#                access_token_url='https://api.twitter.com/oauth/access_token',
+#                authorize_url='https://api.twitter.com/oauth/authorize',
+#                header_auth=True)
+#
 
 #-------------youtube-------------------------
 #the scope specified here is full read/write as opposed to just
 #youtube.readonly or youtube.upload
-youtube_service =OAuth2Service(
-        name='youtube',
-        consumer_key=youtube_client_id,
-        consumer_secret=youtube_client_secret,
-        access_token_url='https://accounts.google.com/o/oauth2/token',
-        authorize_url='https://accounts.google.com/o/oauth2/auth')
+#youtube_service =OAuth2Service(
+#        name='youtube',
+#        consumer_key=youtube_client_id,
+#        consumer_secret=youtube_client_secret,
+#        access_token_url='https://accounts.google.com/o/oauth2/token',
+#        authorize_url='https://accounts.google.com/o/oauth2/auth')
 #------------------------------------------------
 
 @app.route('/')
@@ -69,6 +70,13 @@ def handle_layout():
 @app.route('/learn')
 def handle_learn():
     return render_template('learn.html')
+
+@app.route('/flickr_search')
+def handle_flickr_search():
+    furl='http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=%s&woe_id=2487956&format=json&nojsoncallback=1' % (flickr_key)
+    result=requests.get(furl).json['photos']
+    app.logger.error(result)
+    return jsonify(result)
 
 @app.route('/teach.html')
 @app.route('/teach')
