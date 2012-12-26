@@ -5,38 +5,9 @@
  {%endblock%}
 
 {%block content %}
-<div id="auth_panel">
 
-<div class="sporty" style="background-image:url(static/img/subtlenet2.png); background-repeat:repeat">
-            <img src="http://a.espncdn.com/photo/2011/0920/ncaa_lagunasn2b_300.jpg"/>
-            <h1>About Sporty</h1>
-                <p>Sporty provides a female-friendly place for women who want to even out the playing field.</p>
-                </br>
-                <p>If you want to learn to play a sport at your own pace and from someone of your own gender, but have a hard time finding the right online help, you've come to the right place.</p>
-                </br>
-                <p>Welcome! Get started learning <a href="/learn.html">here</a>.
-        </div >
-
-
-
-</div>
-
-<div class="sporty2">
-            <div class="left">
-                <h2>More sports are coming soon!</h2>
-                <p>Submit your email address to receive updates.</p>
-                <form name="input" class="form-search" action="html_form_action.asp" method="get">
-                <input class="input-medium search-query" type="text" name="user">
-                <button class="btn" type="button">Submit</button>                </form> 
-            </div>
-            <div class="right">
-                <h2>What sports do you want to learn to play?</h2>
-                <p>Email us at <a href="mailto:hey@sporty.com">hey@sporty.com.</p>
-            </div>
-        </div>
-
-        <div class="footer">
-            <h3>Put the you in team.</h3>
+        <div id="collage">
+            
         </div>
 
 {% endblock %}
@@ -56,13 +27,26 @@
                  $.ajax({
                         crossDomain: false,
                         type:'get',
-                        url:'/list_uploads',
+                        url:'/flickr_search',
                         dataType:'json',
                         success: function(results)
                         {
                         console.log(results);
+                        var items_html="";
+                        $.each(results['photo'],function(index,value)
+                            {
+                            farm=value['farm'];
+                            server=value['server'];
+
+                            thumbnail_link='http://farm'+farm+'.staticflickr.com/'+server+'/'+value['id']+'_'+value['secret']+'_m.jpg';
+                            image_link='<img src="'+thumbnail_link+'"/>';
+                            items_html+=image_link;
+                            console.log(image_link);
+                            });
+
+                        $('#collage').html(items_html);
                         }
-                    });
+                        });
 
                  $('#auth_youtube').click(function(e){
                      });//end auth_youtube

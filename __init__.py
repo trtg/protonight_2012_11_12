@@ -75,7 +75,8 @@ def handle_learn():
 def handle_flickr_search():
     furl='http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=%s&woe_id=2487956&format=json&nojsoncallback=1' % (flickr_key)
     result=requests.get(furl).json['photos']
-    app.logger.error(result)
+    #http://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[mstzb].jpg
+    app.logger.error(result['photo'])
     return jsonify(result)
 
 @app.route('/teach.html')
